@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+
+  # The Application
+  php5_6:
+    image: php:5.6-fpm
+    container_name: php5_6
+    build:
+      context: ./
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/php-xdebug.ini
+      # - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=php5_6-mysql"
+    links:
+      - php5_6-mysql
+
+  php5_6-nginx:
+    image: nginx
+    container_name: php5_6-nginx
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./:/var/www/html
+    ports:
+      - 8808:80
+    links:
+      - php5_6
+      - php5_6-mysql
+
+  # The Database
+  php5_6-mysql:
+    image: mysql:5.7
+    container_name: php5_6-mysql
+    environment:
+      - "MYSQL_DATABASE=php5_6"
+      - "MYSQL_USER=php5_6-user"
+      - "MYSQL_PASSWORD=secret"
+      - "MYSQL_ROOT_PASSWORD=secret"
+    entrypoint:
+      sh -c "
+      echo 'CREATE DATABASE IF NOT EXISTS php5_6' > /docker-entrypoint-initdb.d/init.sql;
+      /usr/local/bin/docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode=''"
+    ports:
+        - "33063:3306"
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql/
+      - ./docker/mysql/config:/etc/mysql/conf.d/
+      - ./docker/mysql/log:/var/log/mysql/
