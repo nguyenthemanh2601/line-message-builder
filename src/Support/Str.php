@@ -506,7 +506,7 @@ class Str
      */
     public static function isHankaku($value)
     {
-        return !!preg_match('/^[\p{Han}]+$/u', $value);
+        return (bool)preg_match('/^[\p{Han}]+$/u', $value);
     }
 
     /**
@@ -517,7 +517,7 @@ class Str
      */
     public static function isKatakana($value)
     {
-        return !!preg_match('/^[\p{Katakana}]+$/u', $value);
+        return (bool)preg_match('/^[\p{Katakana}]+$/u', $value);
     }
 
     /**
@@ -528,7 +528,7 @@ class Str
      */
     public static function isHiragana($value)
     {
-        return !!preg_match('/^[\p{Hiragana}]+$/u', $value);
+        return (bool)preg_match('/^[\p{Hiragana}]+$/u', $value);
     }
 
     /**
@@ -539,7 +539,7 @@ class Str
      */
     public static function isFurigana($value)
     {
-        return !!preg_match('/^[\p{Katakana}\p{Hiragana}]+$/u', $value);
+        return (bool)preg_match('/^[\p{Katakana}\p{Hiragana}]+$/u', $value);
     }
 
     /**
@@ -550,7 +550,7 @@ class Str
      */
     public static function isHexadecimalColorCode($value)
     {
-        return !!preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $value);
+        return (bool)preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $value);
     }
 
     /**
