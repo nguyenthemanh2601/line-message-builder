@@ -99,7 +99,7 @@ class Str
 
     /**
      * Uppercase to lowercase and lowercase to uppercase(ASCII string only).
-     * 
+     *
      * @param  string $value
      * @return string
      */
@@ -154,7 +154,7 @@ class Str
 
     /**
      * Returns everything before the last occurrence of the given value in a string.
-     * 
+     *
      * @param  string $subject — The string to search in
      * @param  string $needle — The string to search
      * @return string|false — the extracted part of string or false on failure.
@@ -700,7 +700,7 @@ class Str
 
     /**
      * Is triggered when invoking inaccessible methods in a static context.
-     * 
+     *
      * @param  string $name
      * @param  mixed  $arguments
      * @return mixed
