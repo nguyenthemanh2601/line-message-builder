@@ -1,6 +1,6 @@
 {
     "name": "manhnt/line-message-builder",
-    "version": "0.0.0-pre-alpha",
+    "version": "0.0.0-alpha",
     "type": "library",
     "keywords": [
         "LINE",
@@ -13,5 +13,10 @@
             "name": "Nguyen The Manh",
             "email": "hoangtupro.a4@gmail.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "ManhNt\\": "src/"
+        }
+    }
 }
