@@ -243,10 +243,10 @@ class Str
      */
     public static function snake($value, $delimiter = '_')
     {
-        if (! ctype_lower($value)) {
+        if (!ctype_lower($value)) {
             $value = preg_replace('/\s+/u', '', ucwords($value));
 
-            $value = self::strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value));
+            $value = self::strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value));
         }
 
         return $value;
@@ -276,16 +276,16 @@ class Str
         // Convert all dashes/underscores into separator
         $flip = $separator === '-' ? '_' : '-';
 
-        $title = preg_replace('/['.preg_quote($flip).']+/u', $separator, $title);
+        $title = preg_replace('/[' . preg_quote($flip) . ']+/u', $separator, $title);
 
         // Replace @ with the word 'at'
-        $title = str_replace('@', $separator.'at'.$separator, $title);
+        $title = str_replace('@', $separator . 'at' . $separator, $title);
 
         // Remove all characters that are not the separator, letters, numbers, or whitespace.
-        $title = preg_replace('/[^'.preg_quote($separator).'\pL\pN\s]+/u', '', strtolower($title));
+        $title = preg_replace('/[^' . preg_quote($separator) . '\pL\pN\s]+/u', '', strtolower($title));
 
         // Replace all separator characters and whitespace by a single separator
-        $title = preg_replace('!['.preg_quote($separator).'\s]+!u', $separator, $title);
+        $title = preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $title);
 
         return trim($title, $separator);
     }
@@ -311,7 +311,7 @@ class Str
      */
     public static function endsWith($haystack, $needle)
     {
-        return $needle !== '' && self::substr($haystack, - self::strlen($needle)) === (string)$needle;
+        return $needle !== '' && self::substr($haystack, -self::strlen($needle)) === (string)$needle;
     }
 
     /**
@@ -370,7 +370,7 @@ class Str
      */
     public static function replace($search, $replace, $subject)
     {
-        while(self::contains($subject, $search)) {
+        while (self::contains($subject, $search)) {
             $subject = self::replaceFirst($search, $replace, $subject);
         }
 
@@ -452,7 +452,7 @@ class Str
     {
         $quoted = preg_quote($prefix, '/');
 
-        return $prefix.preg_replace('/^(?:'.$quoted.')+/u', '', $value);
+        return $prefix . preg_replace('/^(?:' . $quoted . ')+/u', '', $value);
     }
 
     /**
@@ -649,7 +649,7 @@ class Str
             '(c)'   => ['©'],
             'A'     => ['Á', 'À', 'Ả', 'Ã', 'Ạ', 'Ă', 'Ắ', 'Ằ', 'Ẳ', 'Ẵ', 'Ặ', 'Â', 'Ấ', 'Ầ', 'Ẩ', 'Ẫ', 'Ậ', 'Å', 'Ā', 'Ą', 'Α', 'Ά', 'Ἀ', 'Ἁ', 'Ἂ', 'Ἃ', 'Ἄ', 'Ἅ', 'Ἆ', 'Ἇ', 'ᾈ', 'ᾉ', 'ᾊ', 'ᾋ', 'ᾌ', 'ᾍ', 'ᾎ', 'ᾏ', 'Ᾰ', 'Ᾱ', 'Ὰ', 'Ά', 'ᾼ', 'А', 'Ǻ', 'Ǎ', 'Ａ', 'Ä'],
             'B'     => ['Б', 'Β', 'ब', 'Ｂ'],
-            'C'     => ['Ç','Ć', 'Č', 'Ĉ', 'Ċ', 'Ｃ'],
+            'C'     => ['Ç', 'Ć', 'Č', 'Ĉ', 'Ċ', 'Ｃ'],
             'D'     => ['Ď', 'Ð', 'Đ', 'Ɖ', 'Ɗ', 'Ƌ', 'ᴅ', 'ᴆ', 'Д', 'Δ', 'Ｄ'],
             'E'     => ['É', 'È', 'Ẻ', 'Ẽ', 'Ẹ', 'Ê', 'Ế', 'Ề', 'Ể', 'Ễ', 'Ệ', 'Ë', 'Ē', 'Ę', 'Ě', 'Ĕ', 'Ė', 'Ε', 'Έ', 'Ἐ', 'Ἑ', 'Ἒ', 'Ἓ', 'Ἔ', 'Ἕ', 'Έ', 'Ὲ', 'Е', 'Ё', 'Э', 'Є', 'Ə', 'Ｅ'],
             'F'     => ['Ф', 'Φ', 'Ｆ'],
