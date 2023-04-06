@@ -18,7 +18,7 @@ echo "\n";
 echo "\n";
 
 $box = new ManhNt\Line\FlexMessage\Component\Box;
-$box->addContent([$image, $text])->layout('baseline');
+$box->layout('horizontal')->addContent([$image, new ManhNt\Line\FlexMessage\Component\Separator, $text]);
 
 echo($box);
 echo "\n";

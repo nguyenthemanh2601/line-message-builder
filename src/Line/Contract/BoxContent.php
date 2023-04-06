@@ -2,9 +2,7 @@
 
 namespace ManhNt\Line\Contract;
 
-use ManhNt\Contract\ArrayAble;
-
-interface BoxContent extends ArrayAble
+abstract class BoxContent extends ConvertAble
 {
     //
 }

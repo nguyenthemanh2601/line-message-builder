@@ -5,15 +5,13 @@ namespace ManhNt\Line\FlexMessage\Component;
 use Exception;
 use ManhNt\Support\Str;
 use UnexpectedValueException;
-use ManhNt\Contract\JsonAble;
-use ManhNt\Contract\StringAble;
 use ManhNt\Line\Contract\BoxContent;
 use ManhNt\Exception\UnexpectedTypeException;
 use ManhNt\Line\FlexMessage\Component\FlexTrait;
 use ManhNt\Line\FlexMessage\Component\ColorTrait;
 use ManhNt\Line\FlexMessage\Component\Action\ActionInterface;
 
-class Text implements BoxContent, JsonAble, StringAble
+class Text extends BoxContent
 {
     use FlexTrait, ColorTrait;
 

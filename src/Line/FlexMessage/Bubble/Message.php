@@ -3,23 +3,22 @@
 namespace ManhNt\Line\FlexMessage\Bubble;
 
 use ManhNt\Contract\ArrayAble;
-use Core\Service\Line\FlexMessage\Component\Box;
+use ManhNt\Line\FlexMessage\Component\Box;
 use Core\Service\Line\FlexMessage\Enum\Direction;
 use Core\Service\Line\FlexMessage\Enum\BubbleSize;
-use Core\Service\Line\FlexMessage\Component\Image;
+use ManhNt\Line\FlexMessage\Component\Image;
 
 class Message implements ArrayAble
 {
-    private const TYPE = 'bubble';
+    protected const TYPE = 'bubble';
 
-    protected BubbleSize $size = BubbleSize::Mega;
-    protected Direction $direction = Direction::LeftToRight;
-
-    public Box $header;
-    public Box|Image $hero;
-    public Box $body;
-    public Box $footer;
-    public Style $style;
+    protected $size;
+    protected $direction;
+    protected $header;
+    protected $hero;
+    protected $body;
+    protected $footer;
+    protected $style;
 
     public function __construct(Box $body, Style $style)
     {

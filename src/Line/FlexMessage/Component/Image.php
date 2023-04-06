@@ -4,13 +4,11 @@ namespace ManhNt\Line\FlexMessage\Component;
 
 use ManhNt\Support\Str;
 use UnexpectedValueException;
-use ManhNt\Contract\JsonAble;
-use ManhNt\Contract\StringAble;
 use ManhNt\Line\Contract\BoxContent;
 use ManhNt\Line\FlexMessage\Component\FlexTrait;
 use ManhNt\Line\FlexMessage\Component\MarginTrait;
 
-class Image implements BoxContent, JsonAble, StringAble
+class Image extends BoxContent
 {
     use FlexTrait, MarginTrait;
 

@@ -5,14 +5,12 @@ namespace ManhNt\Line\FlexMessage\Component;
 use TypeError;
 use ManhNt\Support\Str;
 use UnexpectedValueException;
-use ManhNt\Contract\JsonAble;
-use ManhNt\Contract\StringAble;
 use ManhNt\Line\Contract\BoxContent;
 use ManhNt\Exception\UnexpectedTypeException;
 use ManhNt\Line\FlexMessage\Component\MarginTrait;
 use ManhNt\Exception\ExpectedValueNotFoundException;
 
-class Box implements BoxContent, JsonAble, StringAble
+class Box extends BoxContent
 {
     use MarginTrait;
 

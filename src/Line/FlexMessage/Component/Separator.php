@@ -2,13 +2,11 @@
 
 namespace ManhNt\Line\FlexMessage\Component;
 
-use ManhNt\Contract\JsonAble;
-use ManhNt\Contract\StringAble;
 use ManhNt\Line\Contract\BoxContent;
 use ManhNt\Line\FlexMessage\Component\ColorTrait;
 use ManhNt\Line\FlexMessage\Component\MarginTrait;
 
-class Separator implements BoxContent, JsonAble, StringAble
+class Separator extends BoxContent
 {
     use ColorTrait, MarginTrait;
 
