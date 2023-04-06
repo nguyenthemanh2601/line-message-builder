@@ -100,7 +100,7 @@ class Image implements BoxContent, JsonAble, StringAble
     {
         try {
             return $this->toJson();
-        } catch (UnexpectedValueException $e) {
+        } catch (\Exception $e) {
             return var_export($e);
         }
     }

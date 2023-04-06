@@ -1,21 +1,38 @@
 <?php
 
-namespace Core\Service\Line\FlexMessage\Component;
+namespace ManhNt\Line\FlexMessage\Component;
 
 use TypeError;
+use ManhNt\Support\Str;
 use UnexpectedValueException;
+use ManhNt\Contract\JsonAble;
+use ManhNt\Contract\StringAble;
+use ManhNt\Line\Contract\BoxContent;
+use ManhNt\Exception\UnexpectedTypeException;
 use Core\Service\Line\FlexMessage\Enum\LayoutType;
-use Core\Service\Line\FlexMessage\Component\MarginTrait;
-use Core\Service\Line\FlexMessage\Component\BoxContentInterface;
+use ManhNt\Line\FlexMessage\Component\MarginTrait;
 
-class Box implements BoxContentInterface
+class Box implements BoxContent, JsonAble, StringAble
 {
     use MarginTrait;
-    private const TYPE = 'box';
 
-    protected array $contents;
+    const TYPE = 'box';
 
-    protected LayoutType|string $layout = LayoutType::Vertical;
+    const ALLOWED_LAYOUT_TYPE = ['vertical', 'baseline', 'horizontal'];
+
+    /**
+     * Box layout
+     *
+     * @var string
+     */
+    protected $layout;
+
+    /**
+     * Box contents
+     *
+     * @var array
+     */
+    protected $contents;
 
     public function __construct(array $contents = [])
     {
@@ -24,22 +41,41 @@ class Box implements BoxContentInterface
 
     /**
      * Add content
+     * When the layout property is horizontal or vertical: box, button, image, text, separator, and filler
+     * When the layout property is baseline: icon, text, and filler
      *
-     * @param  BoxContentInterface|array  $content
+     * @param  \ManhNt\Line\Contract\BoxContent|array  $content
      * @return array
      */
-    public function addContent(BoxContentInterface|array $content)
+    public function addContent($content)
     {
         if (is_array($content)) {
             if (empty($content)) {
                 throw new UnexpectedValueException(sprintf('%s: Argument #1 ($content) can not be empty', __METHOD__));
             }
             foreach ($content as $key => $value) {
-                if (!$value instanceof BoxContentInterface) {
-                    throw new TypeError(sprintf('%s: Argument #1 ($content[%d]) must be of type %s, %s given', __METHOD__, $key, BoxContentInterface::class, gettype($value)));
+                if (!$value instanceof BoxContent) {
+                    throw new TypeError(
+                        sprintf(
+                            '%s: Argument #1 ($content[%d]) must be of type %s, %s given',
+                            __METHOD__,
+                            $key,
+                            BoxContent::class,
+                            gettype($value)
+                        )
+                    );
                 }
                 $this->contents[] = $value;
             }
+        } elseif (!$content instanceof BoxContent) {
+            throw new UnexpectedValueException(
+                sprintf(
+                    '%s: Argument #1 ($content)  must be instance of, %s given',
+                    __METHOD__,
+                    BoxContent::class,
+                    gettype($content)
+                )
+            );
         } else {
             $this->contents[] = $content;
         }
@@ -50,15 +86,27 @@ class Box implements BoxContentInterface
     /**
      * Set layout
      *
-     * @param  \Core\Service\Line\FlexMessage\Enum\LayoutType|string  $action
+     * @param  string  $action
      * @return $this
      */
-    public function layout(LayoutType|string $layout)
+    public function layout($layout)
     {
-        $layouts = array_column(LayoutType::cases(), 'value');
+        if (!is_string($layout)) {
+            throw new UnexpectedTypeException($layout, 'string');
+        }
 
-        if (is_string($layout) && !in_array($layout, $layouts)) {
-            throw new UnexpectedValueException(sprintf('Argument #1 ($layouts) must be one of the following values: %s', implode(", ", $layouts)));
+        if (Str::isEmpty($layout)) {
+            throw new UnexpectedValueException('Argument #1 ($text) can not be empty');
+        }
+
+        if (!in_array($layout, static::ALLOWED_LAYOUT_TYPE)) {
+            throw new UnexpectedValueException(
+                sprintf(
+                    '%s Argument #1 ($layouts) must be one of the following values: %s',
+                    __METHOD__,
+                    implode(", ", static::ALLOWED_LAYOUT_TYPE)
+                )
+            );
         }
 
         $this->layout = $layout;
@@ -66,12 +114,21 @@ class Box implements BoxContentInterface
         return $this;
     }
 
-    public function toJson()
+    public function toJson($options = 0)
     {
-
+        return json_encode($this->toArray(), $options);
     }
 
-    public function toArray(): array
+    public function __toString()
+    {
+        try {
+            return $this->toJson();
+        } catch (\Exception $e) {
+            return var_export($e);
+        }
+    }
+
+    public function toArray()
     {
         $value =  [
             "type" => self::TYPE,

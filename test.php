@@ -16,3 +16,10 @@ $text->text('text')->wrap(true)->weight('bold')->size('xxl')->color('#ff0000')->
 echo($text);
 echo "\n";
 echo "\n";
+
+$box = new ManhNt\Line\FlexMessage\Component\Box;
+$box->addContent([$image, $text])->layout('baseline');
+
+echo($box);
+echo "\n";
+echo "\n";
