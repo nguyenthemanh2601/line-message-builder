@@ -19,7 +19,7 @@ trait FlexTrait
      * @param  int  $ratio
      * @return $this
      */
-    public function flex(int $ratio)
+    public function flex($ratio)
     {
         if (0 > $ratio) {
             throw new UnexpectedValueException(sprintf('%s: Argument #1 ($ratio) must be greater than or equal to 0', __METHOD__));

@@ -1,13 +1,10 @@
 <?php
 
-namespace Core\Service\Line\FlexMessage\Component\Action;
+namespace ManhNt\Line\FlexMessage\Component\Action;
 
-interface ActionInterface
+use ManhNt\Contract\ArrayAble;
+
+interface ActionInterface extends ArrayAble
 {
-    /**
-     * Return as array
-     *
-     * @return array
-     */
-    public function toArray(): array;
+    //
 }

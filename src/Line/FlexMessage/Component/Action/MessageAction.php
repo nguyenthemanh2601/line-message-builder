@@ -1,30 +1,37 @@
 <?php
 
-namespace Core\Service\Line\FlexMessage\Component\Action;
+namespace ManhNt\Line\FlexMessage\Component\Action;
 
+use Exception;
 use LogicException;
-use Core\Support\Helper\Str;
+use ManhNt\Support\Str;
 use UnexpectedValueException;
+use ManhNt\Contract\JsonAble;
+use ManhNt\Contract\StringAble;
+use ManhNt\Exception\UnexpectedTypeException;
+use ManhNt\Line\FlexMessage\Component\Action\ActionInterface;
 
-class MessageAction implements ActionInterface
+class MessageAction implements ActionInterface, JsonAble, StringAble
 {
-    private const TYPE = 'message';
-    public const TEXT_MAX_LENGTH = 300;
-    public const LABEL_MAX_LENGTH = 40;
+    const TYPE = 'message';
+
+    const TEXT_MAX_LENGTH = 300;
+
+    const LABEL_MAX_LENGTH = 40;
 
     /**
      * Text sent when the action is performed. Max character limit: 300
      *
      * @var string
      */
-    protected string $text;
+    protected $text;
 
     /**
      * Label for the action.
      *
      * @var string
      */
-    protected ?string $label = null;
+    protected $label = null;
 
     /**
      * Set text.
@@ -32,8 +39,12 @@ class MessageAction implements ActionInterface
      * @param  string  $text  Max character limit: 40
      * @return $this
      */
-    public function text(string $text)
+    public function text($text)
     {
+        if (!is_string($text)) {
+            throw new UnexpectedTypeException($text, 'string');
+        }
+
         if (Str::isEmpty($text)) {
             throw new UnexpectedValueException('Argument #1 ($text) can not be empty');
         }
@@ -53,8 +64,12 @@ class MessageAction implements ActionInterface
      * @param  string  $label  Max character limit
      * @return $this
      */
-    public function label(string $label)
+    public function label($label)
     {
+        if (!is_string($label)) {
+            throw new UnexpectedTypeException($label, 'string');
+        }
+
         if (Str::isEmpty($label)) {
             throw new UnexpectedValueException('Argument #1 ($label) can not be empty');
         }
@@ -68,17 +83,21 @@ class MessageAction implements ActionInterface
         return $this;
     }
 
-    public function toJson()
+    public function toJson($options = 0)
     {
         return json_encode($this->toArray());
     }
 
     public function __toString()
     {
-        return $this->toJson();
+        try {
+            return $this->toJson();
+        } catch (Exception $e) {
+            return var_export($e);
+        }
     }
 
-    public function toArray(): array
+    public function toArray()
     {
         if (Str::isEmpty($this->text)) {
             throw new LogicException('Please set action text first.');
