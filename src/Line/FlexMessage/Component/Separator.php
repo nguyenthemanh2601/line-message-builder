@@ -1,18 +1,39 @@
 <?php
 
-namespace Core\Service\Line\FlexMessage\Component;
+namespace ManhNt\Line\FlexMessage\Component;
 
-use Core\Service\Line\FlexMessage\Component\ColorTrait;
-use Core\Service\Line\FlexMessage\Component\MarginTrait;
+use ManhNt\Contract\JsonAble;
+use ManhNt\Contract\StringAble;
+use ManhNt\Line\Contract\BoxContent;
+use ManhNt\Line\FlexMessage\Component\ColorTrait;
+use ManhNt\Line\FlexMessage\Component\MarginTrait;
 
-class Separator implements BoxContentInterface
+class Separator implements BoxContent, JsonAble, StringAble
 {
     use ColorTrait, MarginTrait;
 
-    private const TYPE = 'separator';
+    const TYPE = 'separator';
 
-    public function toArray(): array
+    public function toJson($options = 0)
     {
-        return array_merge(["type" => self::TYPE], get_object_vars($this));
+        return json_encode($this->toArray(), $options);
+    }
+
+    public function __toString()
+    {
+        try {
+            return $this->toJson();
+        } catch (\Exception $e) {
+            return var_export($e);
+        }
+    }
+
+    public function toArray()
+    {
+        $value =  array_merge(["type" => self::TYPE], get_object_vars($this));
+
+        unset($value['allowedMarginValues']);
+
+        return array_filter($value);
     }
 }
