@@ -9,8 +9,8 @@ use ManhNt\Contract\JsonAble;
 use ManhNt\Contract\StringAble;
 use ManhNt\Line\Contract\BoxContent;
 use ManhNt\Exception\UnexpectedTypeException;
-use Core\Service\Line\FlexMessage\Enum\LayoutType;
 use ManhNt\Line\FlexMessage\Component\MarginTrait;
+use ManhNt\Exception\ExpectedValueNotFoundException;
 
 class Box implements BoxContent, JsonAble, StringAble
 {
@@ -128,19 +128,41 @@ class Box implements BoxContent, JsonAble, StringAble
         }
     }
 
+    private function checkRequiredProperties()
+    {
+        $requiredProperties = ['contents', 'layout'];
+
+        foreach ($requiredProperties as $requiredProperty) {
+            if (empty($this->{$requiredProperty})) {
+                throw new ExpectedValueNotFoundException(
+                    sprintf("%s->{$requiredProperty} can not be empty", __METHOD__)
+                );
+            }
+        }
+    }
+
+    protected function convertArrayAbleProperties()
+    {
+        $arrayAbleProperties = ['contents'];
+        foreach ($arrayAbleProperties as $arrayAbleProperty) {
+            if (is_array($this->{$arrayAbleProperty})) {
+                foreach ($this->{$arrayAbleProperty} as $key => $value) {
+                    $this->{$arrayAbleProperty}[$key] = $this->{$arrayAbleProperty}[$key]->toArray();
+                }
+            } elseif (!empty($this->{$arrayAbleProperty})) {
+                $this->{$arrayAbleProperty} = $this->{$arrayAbleProperty}->toArray();
+            }
+        }
+    }
+
     public function toArray()
     {
-        $value =  [
-            "type" => self::TYPE,
-            "layout" => $this->layout,
-            "contents" => array_map(function($content) {
-                return $content->toArray();
-            }, $this->contents)
-        ];
-        if (isset($this->margin)) {
-            $value['margin'] = $this->margin;
-        }
+        $this->checkRequiredProperties();
+        $this->convertArrayAbleProperties();
+        $value =  array_merge(["type" => self::TYPE], get_object_vars($this));
 
-        return $value;
+        unset($value['allowedMarginValues']);
+
+        return array_filter($value);
     }
 }
