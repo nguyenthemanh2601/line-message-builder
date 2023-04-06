@@ -4,24 +4,25 @@ namespace ManhNt\Line\FlexMessage\Component;
 
 use ManhNt\Contract\ArrayAble;
 use UnexpectedValueException;
+use ManhNt\Exception\UnexpectedTypeException;
 
 class BlockStyle implements ArrayAble
 {
-    protected bool $separator = false;
+    protected $separator = false;
 
     /**
      * Background color of the block
      *
      * @var string
      */
-    protected ?string $backgroundColor;
+    protected $backgroundColor;
 
     /**
      * Color of the separator.
      *
      * @var string
      */
-    protected ?string $separatorColor;
+    protected $separatorColor;
 
     /**
      * Show separator
@@ -29,8 +30,12 @@ class BlockStyle implements ArrayAble
      * @param  bool  $show
      * @return $this
      */
-    public function separator(bool $show)
+    public function separator($show)
     {
+        if (!is_bool($show)) {
+            throw new UnexpectedTypeException($show, 'bool');
+        }
+
         $this->separator = $show;
 
         return $this;
@@ -42,10 +47,19 @@ class BlockStyle implements ArrayAble
      * @param  string  $color
      * @return $this
      */
-    public function backgroundColor(string $backgroundColor)
+    public function backgroundColor($backgroundColor)
     {
+        if (!is_string($backgroundColor)) {
+            throw new UnexpectedTypeException($backgroundColor, 'string');
+        }
+
         if (!preg_match('/^#([A-Fa-f0-9]{6})$/', $backgroundColor)) {
-            throw new UnexpectedValueException('Argument #1 ($backgroundColor) must be a valid hexadecimal color code');
+            throw new UnexpectedValueException(
+                sprintf(
+                    '%s Argument #1 ($backgroundColor) must be a valid hexadecimal color code',
+                    __METHOD__
+                )
+            );
         }
 
         $this->backgroundColor = $backgroundColor;
@@ -59,10 +73,19 @@ class BlockStyle implements ArrayAble
      * @param  string  $color
      * @return $this
      */
-    public function separatorColor(string $separatorColor)
+    public function separatorColor($separatorColor)
     {
+        if (!is_string($separatorColor)) {
+            throw new UnexpectedTypeException($separatorColor, 'string');
+        }
+
         if (!preg_match('/^#([A-Fa-f0-9]{6})$/', $separatorColor)) {
-            throw new UnexpectedValueException('Argument #1 ($separatorColor) must be a valid hexadecimal color code');
+            throw new UnexpectedValueException(
+                sprintf(
+                    '%s Argument #1 ($separatorColor) must be a valid hexadecimal color code',
+                    __METHOD__
+                )
+            );
         }
 
         $this->separatorColor = $separatorColor;
@@ -70,7 +93,7 @@ class BlockStyle implements ArrayAble
         return $this;
     }
 
-    public function toArray(): array
+    public function toArray()
     {
         $value = [];
 
