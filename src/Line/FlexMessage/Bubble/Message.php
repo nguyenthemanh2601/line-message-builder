@@ -7,6 +7,7 @@ use ManhNt\Line\FlexMessage\Component\Box;
 use Core\Service\Line\FlexMessage\Enum\Direction;
 use Core\Service\Line\FlexMessage\Enum\BubbleSize;
 use ManhNt\Line\FlexMessage\Component\Image;
+use ManhNt\Exception\UnexpectedTypeException;
 
 class Message implements ArrayAble
 {
@@ -26,37 +27,48 @@ class Message implements ArrayAble
         $this->style = $style;
     }
 
-    public function hero(Box|Image $hero = null)
+    public function hero($hero = null)
     {
-        if (func_num_args()) {
-            $this->hero = $hero;
+        $allowedTypes = [Box::class, Image::class];
 
-            return $this;
+        foreach ($allowedTypes as $type) {
+            if (is_subclass_off($hero, $type)) {
+                break;
+            }
+
+            throw new UnexpectedTypeException(
+                sprintf(
+                    "%s Argument #1 must be instance of following type: %s. Given %s",
+                    __METHOD__.
+                    implode("|", $allowedTypes),
+                    gettype($hero)
+                )
+            );
         }
 
-        return $this->hero ?? $this->hero = app()->make(Box::class);
+        if (func_num_args()) {
+            $this->hero = $hero;
+        }
+
+        return $this;
     }
 
     public function header(Box $header = null)
     {
         if (func_num_args()) {
             $this->header = $header;
-
-            return $this;
         }
 
-        return $this->header ?? $this->header = app()->make(Box::class);
+        return $this;
     }
 
     public function footer(Box $footer = null)
     {
         if (func_num_args()) {
             $this->footer = $footer;
-
-            return $this;
         }
 
-        return $this->footer ?? $this->footer = app()->make(Box::class);
+        return $this;
     }
 
     public function size(BubbleSize $size)
