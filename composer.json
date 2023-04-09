@@ -18,5 +18,13 @@
         "psr-4": {
             "ManhNt\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
     }
 }
