@@ -25,7 +25,7 @@ trait MarginTrait
             throw new UnexpectedTypeException($margin, 'string');
         }
 
-        $isNotCorrectStruct = !in_array($margin, static::$allowedMarginValues)
+        $isNotCorrectStruct = !in_array($margin, $this->allowedMarginValues)
             && (!Str::endsWith($margin, 'px')
                 || !is_numeric(Str::before($margin, 'px'))
                 || Str::before($margin, 'px') < "0"
