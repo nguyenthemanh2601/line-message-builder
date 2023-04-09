@@ -2,7 +2,7 @@
 
 namespace ManhNt\Exception;
 
-class UnexpectedTypeException extends \RuntimeException
+class  UnexpectedTypeException extends \RuntimeException
 {
     /**
      * @param  mixed  $value
