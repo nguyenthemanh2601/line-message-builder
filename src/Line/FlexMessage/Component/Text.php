@@ -182,7 +182,11 @@ class Text extends BoxContent
      */
     public function decoration($decoration)
     {
-        if (is_string($decoration) && !in_array($decoration, static::ALLOWED_DECORATION)) {
+        if (!is_string($decoration)) {
+            throw new UnexpectedTypeException($decoration, 'string');
+        }
+
+        if (!in_array($decoration, static::ALLOWED_DECORATION)) {
             throw new UnexpectedValueException(
                 sprintf(
                     'Argument #1 ($decoration) must be one of the following values: %s',
