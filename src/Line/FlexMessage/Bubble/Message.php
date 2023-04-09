@@ -2,48 +2,53 @@
 
 namespace ManhNt\Line\FlexMessage\Bubble;
 
+use ManhNt\Support\Container;
 use ManhNt\Contract\ArrayAble;
 use ManhNt\Line\FlexMessage\Component\Box;
-use Core\Service\Line\FlexMessage\Enum\Direction;
-use Core\Service\Line\FlexMessage\Enum\BubbleSize;
 use ManhNt\Line\FlexMessage\Component\Image;
 use ManhNt\Exception\UnexpectedTypeException;
+use Core\Service\Line\FlexMessage\Enum\Direction;
+use Core\Service\Line\FlexMessage\Enum\BubbleSize;
 
 class Message implements ArrayAble
 {
-    protected const TYPE = 'bubble';
+    const TYPE = 'bubble';
+
+    /** @var \ManhNt\Line\FlexMessage\Component\Box */
+    public $body;
+
+    /** @var \ManhNt\Line\FlexMessage\Bubble\Style */
+    public $style;
 
     protected $size;
     protected $direction;
     protected $header;
     protected $hero;
-    protected $body;
     protected $footer;
-    protected $style;
 
-    public function __construct(Box $body, Style $style)
+    public function __construct(Box $body = null, Style $style = null)
+    {
+        $this->initialize($body, $style);
+    }
+
+    private function initialize(Box $body = null, Style $style = null)
     {
         $this->body = $body;
         $this->style = $style;
+        if (!$this->body) {
+            $this->body = Container::getInstance()->make(Box::class);
+        }
+        if (!$this->style) {
+            $this->style = Container::getInstance()->make(Style::class);
+        }
     }
 
     public function hero($hero = null)
     {
         $allowedTypes = [Box::class, Image::class];
 
-        foreach ($allowedTypes as $type) {
-            if (is_subclass_off($hero, $type)) {
-                break;
-            }
-
-            throw new UnexpectedTypeException(
-                sprintf(
-                    "%s Argument #1 must be instance of following type: %s. Given %s",
-                    __METHOD__.
-                    implode("|", $allowedTypes),
-                    gettype($hero)
-                )
-            );
+        if ("object" != gettype($hero) && !in_array(get_class($hero), $allowedTypes)) {
+            throw new UnexpectedTypeException($hero, implode("|", $allowedTypes));
         }
 
         if (func_num_args()) {
@@ -90,26 +95,21 @@ class Message implements ArrayAble
         return json_encode($this->toArray());
     }
 
-    public function __toString(): string
+    public function __toString()
     {
         return $this->toJson();
     }
 
-    public function toArray(): array
+    public function toArray()
     {
-        $value = [
-            'type' => self::TYPE,
-            'size' => $this->size,
-            'body' => $this->body->toArray(),
-            'styles' => $this->style->toArray(),
-        ];
+        $value =  array_merge(["type" => self::TYPE], get_object_vars($this));
 
-        foreach (['header', 'hero', 'footer'] as $property) {
-            if (isset($this->{$property})) {
-                $value[$property] = $this->{$property}->toArray();
+        foreach ($value as $k => $v) {
+            if ($v instanceof ArrayAble) {
+                $value[$k] = $v->toArray();
             }
         }
 
-        return array_filter($value, function($v) { return !empty($v);});
+        return array_filter($value);
     }
 }
