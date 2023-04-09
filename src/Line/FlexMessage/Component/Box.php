@@ -122,7 +122,13 @@ class Box extends BoxContent
         try {
             return $this->toJson();
         } catch (\Exception $e) {
-            return var_export($e);
+            return print_r([
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ], true);
         }
     }
 
@@ -133,7 +139,7 @@ class Box extends BoxContent
         foreach ($requiredProperties as $requiredProperty) {
             if (empty($this->{$requiredProperty})) {
                 throw new ExpectedValueNotFoundException(
-                    sprintf("%s->{$requiredProperty} can not be empty", __METHOD__)
+                    sprintf("%s::{$requiredProperty} can not be empty", __CLASS__)
                 );
             }
         }
@@ -141,23 +147,25 @@ class Box extends BoxContent
 
     protected function convertArrayAbleProperties()
     {
+        $convertedProperties = [];
         $arrayAbleProperties = ['contents'];
         foreach ($arrayAbleProperties as $arrayAbleProperty) {
             if (is_array($this->{$arrayAbleProperty})) {
                 foreach ($this->{$arrayAbleProperty} as $key => $value) {
-                    $this->{$arrayAbleProperty}[$key] = $this->{$arrayAbleProperty}[$key]->toArray();
+                    $convertedProperties[$arrayAbleProperty][$key] = $this->{$arrayAbleProperty}[$key]->toArray();
                 }
             } elseif (!empty($this->{$arrayAbleProperty})) {
-                $this->{$arrayAbleProperty} = $this->{$arrayAbleProperty}->toArray();
+                $convertedProperties[$arrayAbleProperty] = $this->{$arrayAbleProperty}->toArray();
             }
         }
+
+        return $convertedProperties;
     }
 
     public function toArray()
     {
         $this->checkRequiredProperties();
-        $this->convertArrayAbleProperties();
-        $value =  array_merge(["type" => self::TYPE], get_object_vars($this));
+        $value =  array_merge(["type" => self::TYPE], get_object_vars($this), $this->convertArrayAbleProperties());
 
         unset($value['allowedMarginValues']);
 
