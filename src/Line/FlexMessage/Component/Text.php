@@ -229,6 +229,7 @@ class Text extends BoxContent
     public function toArray()
     {
         $values = [
+            'type' => self::TYPE,
             "wrap"  => $this->wrap
         ];
         if (isset($this->flex)) {
@@ -238,7 +239,9 @@ class Text extends BoxContent
             $values['action'] = $this->action->toArray();
         }
 
-        return array_merge(["type" => self::TYPE], get_object_vars($this), $values);
+        $values = array_merge(get_object_vars($this), $values);
+
+        return array_filter($values);
     }
 
     public function toJson($options = 0)
