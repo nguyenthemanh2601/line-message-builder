@@ -12,12 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Update composer
-      uses: php-actions/composer@v6
-      with:
-        version: "2.2.21"
-        php_version: "5.6.40"
-        command: composer update
     - name: PHPUnit Tests
       uses: php-actions/phpunit@v5
       with:
