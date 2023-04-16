@@ -13,7 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Update composer
-      run: composer update
+      uses: php-actions/composer@v6
+      with:
+        php_version: "5.6.40"
+        command: composer update
     - name: PHPUnit Tests
       uses: php-actions/phpunit@v5
       with:
