@@ -15,6 +15,7 @@ jobs:
     - name: Update composer
       uses: php-actions/composer@v6
       with:
+        version: "2.2.21"
         php_version: "5.6.40"
         command: composer update
     - name: PHPUnit Tests
