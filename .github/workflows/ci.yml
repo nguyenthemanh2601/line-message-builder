@@ -13,7 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Update composer
-      uses: php-actions/composer@v6 # or alternative dependency management
       run: composer update
     - name: PHPUnit Tests
       uses: php-actions/phpunit@v5
