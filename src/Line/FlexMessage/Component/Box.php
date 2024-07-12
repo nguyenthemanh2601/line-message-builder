@@ -2,20 +2,31 @@
 
 namespace ManhNt\Line\FlexMessage\Component;
 
-use TypeError;
 use ManhNt\Support\Str;
 use UnexpectedValueException;
 use ManhNt\Line\Contract\BoxContent;
+use ManhNt\Line\Contract\BubbleHero;
 use ManhNt\Exception\UnexpectedTypeException;
-use ManhNt\Line\FlexMessage\Component\MarginTrait;
 use ManhNt\Exception\ExpectedValueNotFoundException;
+use ManhNt\Line\FlexMessage\Trait\FlexTrait;
+use ManhNt\Line\FlexMessage\Trait\MarginTrait;
 
-class Box extends BoxContent
+/**
+ * @experimental
+ *
+ * This class can be modified in any way, or even removed, at any time.
+ * Precautions when using it in production environments.
+ * They are purely to allow broad testing and feedback.
+ *
+ * @author Nguyen The Manh <nguyenthemanh26011996@gmail.com>
+ */
+class Box extends BoxContent implements BubbleHero
 {
-    use MarginTrait;
+    use FlexTrait, MarginTrait;
 
     const TYPE = 'box';
 
+    const ALLOWED_SPACINGS = ['sm', 'md', 'lg', 'xs', 'xl', 'xxl'];
     const ALLOWED_LAYOUT_TYPE = ['vertical', 'baseline', 'horizontal'];
 
     /**
@@ -24,6 +35,13 @@ class Box extends BoxContent
      * @var string
      */
     protected $layout;
+
+    /**
+     * Box layout
+     *
+     * @var string
+     */
+    protected $spacing;
 
     /**
      * Box contents
@@ -37,13 +55,18 @@ class Box extends BoxContent
         $this->contents = $contents;
     }
 
+    public static function factory(array $contents = [])
+    {
+        return new static($contents);
+    }
+
     /**
      * Add content
      * When the layout property is horizontal or vertical: box, button, image, text, separator, and filler
      * When the layout property is baseline: icon, text, and filler
      *
      * @param  \ManhNt\Line\Contract\BoxContent|array  $content
-     * @return array
+     * @return $this
      */
     public function addContent($content)
     {
@@ -51,17 +74,9 @@ class Box extends BoxContent
             if (empty($content)) {
                 throw new UnexpectedValueException(sprintf('%s: Argument #1 ($content) can not be empty', __METHOD__));
             }
-            foreach ($content as $key => $value) {
+            foreach ($content as $value) {
                 if (!$value instanceof BoxContent) {
-                    throw new TypeError(
-                        sprintf(
-                            '%s: Argument #1 ($content[%d]) must be of type %s, %s given',
-                            __METHOD__,
-                            $key,
-                            BoxContent::class,
-                            gettype($value)
-                        )
-                    );
+                    throw new UnexpectedTypeException($value, BoxContent::class);
                 }
                 $this->contents[] = $value;
             }
@@ -84,7 +99,7 @@ class Box extends BoxContent
     /**
      * Set layout
      *
-     * @param  string  $action
+     * @param  string  $layout
      * @return $this
      */
     public function layout($layout)
@@ -108,6 +123,37 @@ class Box extends BoxContent
         }
 
         $this->layout = $layout;
+
+        return $this;
+    }
+
+    /**
+     * Set spacing
+     *
+     * @param  string  $spacing
+     * @return $this
+     */
+    public function spacing($spacing)
+    {
+        if (!is_string($spacing)) {
+            throw new UnexpectedTypeException($spacing, 'string');
+        }
+
+        if (Str::isEmpty($spacing)) {
+            throw new UnexpectedValueException('Argument #1 ($text) can not be empty');
+        }
+
+        if (!in_array($spacing, static::ALLOWED_SPACINGS)) {
+            throw new UnexpectedValueException(
+                sprintf(
+                    '%s Argument #1 ($layouts) must be one of the following values: %s',
+                    __METHOD__,
+                    implode(", ", static::ALLOWED_SPACINGS)
+                )
+            );
+        }
+
+        $this->spacing = $spacing;
 
         return $this;
     }
@@ -167,8 +213,8 @@ class Box extends BoxContent
         $this->checkRequiredProperties();
         $value =  array_merge(["type" => self::TYPE], get_object_vars($this), $this->convertArrayAbleProperties());
 
-        unset($value['allowedMarginValues']);
-
-        return array_filter($value);
+        return array_filter($value, function ($v) {
+            return !is_null($v);
+        });
     }
 }

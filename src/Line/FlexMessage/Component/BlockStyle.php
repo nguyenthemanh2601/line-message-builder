@@ -6,6 +6,15 @@ use ManhNt\Contract\ArrayAble;
 use UnexpectedValueException;
 use ManhNt\Exception\UnexpectedTypeException;
 
+/**
+ * @experimental
+ *
+ * This class can be modified in any way, or even removed, at any time.
+ * Precautions when using it in production environments.
+ * They are purely to allow broad testing and feedback.
+ *
+ * @author Nguyen The Manh <nguyenthemanh26011996@gmail.com>
+ */
 class BlockStyle implements ArrayAble
 {
     protected $separator = false;
@@ -23,6 +32,14 @@ class BlockStyle implements ArrayAble
      * @var string
      */
     protected $separatorColor;
+
+    /**
+     * @return $this
+     */
+    public static function factory()
+    {
+        return new static;
+    }
 
     /**
      * Show separator

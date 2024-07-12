@@ -5,15 +5,26 @@ namespace ManhNt\Line\FlexMessage\Component;
 use Exception;
 use ManhNt\Support\Str;
 use UnexpectedValueException;
-use ManhNt\Line\Contract\BoxContent;
 use ManhNt\Exception\UnexpectedTypeException;
-use ManhNt\Line\FlexMessage\Component\FlexTrait;
-use ManhNt\Line\FlexMessage\Component\ColorTrait;
-use ManhNt\Line\FlexMessage\Component\Action\ActionInterface;
+use ManhNt\Line\Contract\BoxContent;
+use ManhNt\Line\FlexMessage\Component\Offset;
+use ManhNt\Line\FlexMessage\Trait\ActionTrait;
+use ManhNt\Line\FlexMessage\Trait\ColorTrait;
+use ManhNt\Line\FlexMessage\Trait\FlexTrait;
+use ManhNt\Line\FlexMessage\Trait\MarginTrait;
 
+/**
+ * @experimental
+ *
+ * This class can be modified in any way, or even removed, at any time.
+ * Precautions when using it in production environments.
+ * They are purely to allow broad testing and feedback.
+ *
+ * @author Nguyen The Manh <nguyenthemanh26011996@gmail.com>
+ */
 class Text extends BoxContent
 {
-    use FlexTrait, ColorTrait;
+    use FlexTrait, ColorTrait, MarginTrait, ActionTrait;
 
     const TYPE = 'text';
 
@@ -68,11 +79,23 @@ class Text extends BoxContent
     protected $weight;
 
     /**
-     * Action
+     * Offset
      *
-     * @var \ManhNt\Line\FlexMessage\Component\Action\ActionInterface
+     * @var \ManhNt\Line\FlexMessage\Component\Offset
      */
-    protected $action;
+    protected $offset;
+
+    public function __construct($text = null)
+    {
+        if (!is_null($text)) {
+            $this->content($text);
+        }
+    }
+
+    public static function factory($text = null)
+    {
+        return new static($text);
+    }
 
     /**
      * Set text. Be sure to set either one of the text property or contents
@@ -81,8 +104,9 @@ class Text extends BoxContent
      * @param  string  $text
      * @return $this
      */
-    public function text($text)
+    public function content($text)
     {
+        $text = is_numeric($text) ? (string) $text : $text;
         if (!is_string($text)) {
             throw new UnexpectedTypeException($text, 'string');
         }
@@ -201,19 +225,6 @@ class Text extends BoxContent
     }
 
     /**
-     * Set action
-     *
-     * @param  \ManhNt\Line\FlexMessage\Component\Action\ActionInterface  $action
-     * @return $this
-     */
-    public function action(ActionInterface $action)
-    {
-        $this->action = $action;
-
-        return $this;
-    }
-
-    /**
      * Wrap text. If set to true, you can use a new line character (\n) to begin on a new line.
      *
      * @param  bool  $wrap
@@ -226,6 +237,19 @@ class Text extends BoxContent
         }
 
         $this->wrap = $wrap;
+
+        return $this;
+    }
+
+    /**
+     * Set offset
+     *
+     * @param  \ManhNt\Line\FlexMessage\Component\Offset  $offset
+     * @return $this
+     */
+    public function offset(Offset $offset)
+    {
+        $this->offset = $offset;
 
         return $this;
     }
@@ -244,6 +268,10 @@ class Text extends BoxContent
         }
 
         $values = array_merge(get_object_vars($this), $values);
+        if (!empty($values['offset'])) {
+            $values = array_merge($values, $values['offset']->toArray());
+            unset($values['offset']);
+        }
 
         return array_filter($values);
     }
@@ -258,7 +286,7 @@ class Text extends BoxContent
         try {
             return $this->toJson();
         } catch (Exception $e) {
-            return var_export($e);
+            return var_export($e, true);
         }
     }
 }

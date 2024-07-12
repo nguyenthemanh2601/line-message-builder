@@ -1,6 +1,6 @@
 <?php
 
-namespace ManhNt\Line\FlexMessage\Component;
+namespace ManhNt\Line\FlexMessage\Trait;
 
 use ManhNt\Support\Str;
 use UnexpectedValueException;
@@ -8,10 +8,6 @@ use ManhNt\Exception\UnexpectedTypeException;
 
 trait MarginTrait
 {
-    protected $allowedMarginValues = [
-        'sm', 'md', 'lg', 'xs', 'xl', 'xxl', 'none',
-    ];
-
     /**
      * Margin. The minimum amount of space to include before this component in its parent container.
      *
@@ -19,13 +15,25 @@ trait MarginTrait
      */
     protected $margin;
 
+    /**
+     * Return allowed margin values.
+     *
+     * @return string[]
+     */
+    public static function allowedMarginValues()
+    {
+        return [
+            'sm', 'md', 'lg', 'xs', 'xl', 'xxl', 'none',
+        ];
+    }
+
     public function margin($margin)
     {
         if (!is_string($margin)) {
             throw new UnexpectedTypeException($margin, 'string');
         }
 
-        $isNotCorrectStruct = !in_array($margin, $this->allowedMarginValues)
+        $isNotCorrectStruct = !in_array($margin, static::allowedMarginValues())
             && (!Str::endsWith($margin, 'px')
                 || !is_numeric(Str::before($margin, 'px'))
                 || Str::before($margin, 'px') < "0"

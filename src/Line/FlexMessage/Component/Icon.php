@@ -5,18 +5,15 @@ namespace ManhNt\Line\FlexMessage\Component;
 use ManhNt\Support\Str;
 use UnexpectedValueException;
 use ManhNt\Line\Contract\BoxContent;
-use ManhNt\Line\Contract\BubbleHero;
-use ManhNt\Line\FlexMessage\Trait\FlexTrait;
 use ManhNt\Line\FlexMessage\Trait\MarginTrait;
 
-class Image extends BoxContent implements BubbleHero
+class Icon extends BoxContent
 {
-    use FlexTrait, MarginTrait;
+    use MarginTrait;
 
-    const TYPE = 'image';
+    const TYPE = 'icon';
     const URL_MAX_LENGTH = 2000;
-    const ALLOW_ASPECT_MODE = ['cover', 'fit'];
-    const ALLOW_SIZES = ['sm', 'md', 'lg', 'xs', 'xl', 'xxs', 'xxl', '3xl', '4xl', '5xl', 'full'];
+    const ALLOW_SIZES = ['sm', 'md', 'lg', 'xs', 'xl', 'xxs', 'xxl', '3xl', '4xl', '5xl'];
 
     /**
      * Image url
@@ -38,13 +35,6 @@ class Image extends BoxContent implements BubbleHero
      * @var string
      */
     protected $aspectRatio = "1:1";
-
-    /**
-     * Aspect mode
-     *
-     * @var string
-     */
-    protected $aspectMode;
 
     public function __construct($url = null, $size = null)
     {
@@ -100,26 +90,6 @@ class Image extends BoxContent implements BubbleHero
         }
 
         $this->aspectRatio = $ratio;
-
-        return $this;
-    }
-
-    /**
-     * Set image url
-     *
-     * @param  string  $ratio {width}:{height}
-     * @throws \UnexpectedValueException
-     * @return $this
-     */
-    public function aspectMode($mode)
-    {
-        if (!in_array($mode, static::ALLOW_ASPECT_MODE)) {
-            throw new UnexpectedValueException(
-                sprintf('Argument #1 ($mode) must be one of the following values: ', implode(", ", static::ALLOW_ASPECT_MODE))
-            );
-        }
-
-        $this->aspectMode = $mode;
 
         return $this;
     }

@@ -3,21 +3,29 @@
 namespace ManhNt\Line\FlexMessage\Component\Action;
 
 use Exception;
-use LogicException;
 use ManhNt\Support\Str;
 use UnexpectedValueException;
 use ManhNt\Contract\JsonAble;
 use ManhNt\Contract\StringAble;
 use ManhNt\Exception\UnexpectedTypeException;
-use ManhNt\Line\FlexMessage\Component\Action\ActionInterface;
 
+/**
+ * @experimental
+ *
+ * This class can be modified in any way, or even removed, at any time.
+ * Precautions when using it in production environments.
+ * They are purely to allow broad testing and feedback.
+ *
+ * @author Nguyen The Manh <nguyenthemanh26011996@gmail.com>
+ */
 class MessageAction implements ActionInterface, JsonAble, StringAble
 {
-    const TYPE = 'message';
 
     const TEXT_MAX_LENGTH = 300;
 
     const LABEL_MAX_LENGTH = 40;
+
+    protected $type;
 
     /**
      * Text sent when the action is performed. Max character limit: 300
@@ -32,6 +40,11 @@ class MessageAction implements ActionInterface, JsonAble, StringAble
      * @var string
      */
     protected $label = null;
+
+    public static function factory()
+    {
+        return new static;
+    }
 
     /**
      * Set text.
@@ -93,16 +106,12 @@ class MessageAction implements ActionInterface, JsonAble, StringAble
         try {
             return $this->toJson();
         } catch (Exception $e) {
-            return var_export($e);
+            return var_export($e, true);
         }
     }
 
     public function toArray()
     {
-        if (Str::isEmpty($this->text)) {
-            throw new LogicException('Please set action text first.');
-        }
-
-        return array_merge(["type" => self::TYPE], array_filter(get_object_vars($this)));
+        return array_filter(get_object_vars($this));
     }
 }
