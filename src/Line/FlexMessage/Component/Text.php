@@ -12,6 +12,7 @@ use ManhNt\Line\FlexMessage\Trait\ActionTrait;
 use ManhNt\Line\FlexMessage\Trait\ColorTrait;
 use ManhNt\Line\FlexMessage\Trait\FlexTrait;
 use ManhNt\Line\FlexMessage\Trait\MarginTrait;
+use ManhNt\Line\FlexMessage\Trait\OffsetTrait;
 
 /**
  * @experimental
@@ -24,7 +25,7 @@ use ManhNt\Line\FlexMessage\Trait\MarginTrait;
  */
 class Text extends BoxContent
 {
-    use FlexTrait, ColorTrait, MarginTrait, ActionTrait;
+    use FlexTrait, ColorTrait, MarginTrait, ActionTrait, OffsetTrait;
 
     const TYPE = 'text';
 
@@ -77,13 +78,6 @@ class Text extends BoxContent
      * @var string
      */
     protected $weight;
-
-    /**
-     * Offset
-     *
-     * @var \ManhNt\Line\FlexMessage\Component\Offset
-     */
-    protected $offset;
 
     public function __construct($text = null)
     {
@@ -237,19 +231,6 @@ class Text extends BoxContent
         }
 
         $this->wrap = $wrap;
-
-        return $this;
-    }
-
-    /**
-     * Set offset
-     *
-     * @param  \ManhNt\Line\FlexMessage\Component\Offset  $offset
-     * @return $this
-     */
-    public function offset(Offset $offset)
-    {
-        $this->offset = $offset;
 
         return $this;
     }
