@@ -10,6 +10,7 @@ use ManhNt\Exception\UnexpectedTypeException;
 use ManhNt\Exception\ExpectedValueNotFoundException;
 use ManhNt\Line\FlexMessage\Trait\FlexTrait;
 use ManhNt\Line\FlexMessage\Trait\MarginTrait;
+use ManhNt\Line\FlexMessage\Trait\OffsetTrait;
 
 /**
  * @experimental
@@ -22,7 +23,7 @@ use ManhNt\Line\FlexMessage\Trait\MarginTrait;
  */
 class Box extends BoxContent implements BubbleHero
 {
-    use FlexTrait, MarginTrait;
+    use FlexTrait, MarginTrait, OffsetTrait;
 
     const TYPE = 'box';
 
@@ -49,6 +50,20 @@ class Box extends BoxContent implements BubbleHero
      * @var array
      */
     protected $contents;
+
+    /**
+     * Box position
+     *
+     * @var array
+     */
+    protected $position;
+
+    /**
+     * background color
+     *
+     * @var string
+     */
+    protected $backgroundColor;
 
     public function __construct(array $contents = [])
     {
@@ -154,6 +169,54 @@ class Box extends BoxContent implements BubbleHero
         }
 
         $this->spacing = $spacing;
+
+        return $this;
+    }
+
+    /**
+     * Set position
+     *
+     * @param  string  $value
+     * @return $this
+     */
+    public function position($value)
+    {
+        if (!is_string($value)) {
+            throw new UnexpectedTypeException($value, 'string');
+        }
+
+        if (Str::isEmpty($value)) {
+            throw new UnexpectedValueException('Argument #1 ($value) can not be empty');
+        }
+
+        if (!in_array($value, static::ALLOWED_POSITION)) {
+            throw new UnexpectedValueException(
+                sprintf(
+                    '%s Argument #1 ($value) must be one of the following values: %s',
+                    __METHOD__,
+                    implode(", ", static::ALLOWED_POSITION)
+                )
+            );
+        }
+
+        $this->position = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set background color
+     *
+     * @param  string  $color
+     * @return $this
+     */
+    public function backgroundColor($color)
+    {
+        if (!preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/', $color)) {
+            throw new UnexpectedValueException('Argument #1 ($color) must be a valid hexadecimal color code');
+        }
+
+        $this->color = $color;
 
         return $this;
     }
