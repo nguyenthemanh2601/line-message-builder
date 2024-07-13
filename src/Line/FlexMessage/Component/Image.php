@@ -16,6 +16,7 @@ class Image extends BoxContent implements BubbleHero
     const TYPE = 'image';
     const URL_MAX_LENGTH = 2000;
     const ALLOW_ASPECT_MODE = ['cover', 'fit'];
+    const ALLOW_GRAVITY = ['top', 'bottom', 'center'];
     const ALLOW_SIZES = ['sm', 'md', 'lg', 'xs', 'xl', 'xxs', 'xxl', '3xl', '4xl', '5xl', 'full'];
 
     /**
@@ -45,6 +46,13 @@ class Image extends BoxContent implements BubbleHero
      * @var string
      */
     protected $aspectMode;
+
+    /**
+     * Alignment style in vertical direction
+     *
+     * @var string
+     */
+    protected $gravity;
 
     public function __construct($url = null, $size = null)
     {
@@ -100,6 +108,26 @@ class Image extends BoxContent implements BubbleHero
         }
 
         $this->aspectRatio = $ratio;
+
+        return $this;
+    }
+
+    /**
+     * Set gravity
+     *
+     * @param  string  $value top|bottom|center
+     * @throws \UnexpectedValueException
+     * @return $this
+     */
+    public function gravity($value)
+    {
+        if (!in_array($value, static::ALLOW_GRAVITY)) {
+            throw new UnexpectedValueException(
+                sprintf('Argument #1 ($value) must be one of the following values: ', implode(", ", static::ALLOW_GRAVITY))
+            );
+        }
+
+        $this->gravity = $value;
 
         return $this;
     }
