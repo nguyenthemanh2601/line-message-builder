@@ -9,61 +9,119 @@ use ManhNt\Line\Contract\BoxContent;
 
 class Offset extends BoxContent
 {
-    const ALLOWED_FONT_SIZE = ['sm', 'md', 'lg', 'xs', 'xl', 'xxl'];
+    const ALLOWED_VALUE = ['sm', 'md', 'lg', 'xs', 'xl', 'xxl'];
 
-    protected $offsetTop;
-    protected $offsetBottom;
-    protected $offsetStart;
-    protected $offsetEnd;
+    /**
+     * Shifts the component down from the top edge of the component's original position.
+     *
+     * @var string
+     */
+    protected $top;
 
-    public function __construct($offsetTop = null, $offsetBottom = null, $offsetStart = null, $offsetEnd = null)
+    /**
+     * Shifts the component up from the bottom edge of the component's original position.
+     *
+     * @var string
+     */
+    protected $bottom;
+
+    /**
+     * Shifts the component away from the where the text starts.
+     * If the bubble's text direction is LTR, shift is to the right. If RTL, shift is to the left.
+     *
+     * @var string
+     */
+    protected $start;
+
+    /**
+     * Away from the where the text ends. If the bubble's text direction is LTR, shift is to the left.
+     * If RTL, shift is to the right.
+     *
+     * @var string
+     */
+    protected $end;
+
+    public function __construct($top = null, $bottom = null, $start = null, $end = null)
     {
-        $this->offsetTop = $offsetTop;
-        $this->offsetBottom = $offsetBottom;
-        $this->offsetStart = $offsetStart;
-        $this->offsetEnd = $offsetEnd;
+        $this->top = $top;
+        $this->bottom = $bottom;
+        $this->start = $start;
+        $this->end = $end;
     }
 
-    public static function factory($offsetTop = null, $offsetBottom = null, $offsetStart = null, $offsetEnd = null)
+    public static function factory($offsetTop = null, $bottom = null, $start = null, $end = null)
     {
-        return new static($offsetTop, $offsetBottom, $offsetStart, $offsetEnd);
+        return new static($offsetTop, $bottom, $start, $end);
     }
 
+    /**
+     * Set offset top
+     *
+     * @param string $value
+     * @return $this
+     * @throws \UnexpectedValueException
+     */
     public function top($value)
     {
         $this->validate($value);
-        $this->offsetTop = $value;
+        $this->top = $value;
 
         return $this;
     }
 
+    /**
+     * Set offset bottom
+     *
+     * @param string $value
+     * @return $this
+     * @throws \UnexpectedValueException
+     */
     public function bottom($value)
     {
         $this->validate($value);
-        $this->offsetBottom = $value;
+        $this->bottom = $value;
 
         return $this;
     }
 
+    /**
+     * Set offset start
+     *
+     * @param string $value
+     * @return $this
+     * @throws \UnexpectedValueException
+     */
     public function start($value)
     {
         $this->validate($value);
-        $this->offsetStart = $value;
+        $this->start = $value;
 
         return $this;
     }
 
-    public function end($value)
+    /**
+     * Set offset end
+     *
+     * @param string $value
+     * @return $this
+     * @throws \UnexpectedValueException
+     */    public function end($value)
     {
         $this->validate($value);
-        $this->offsetEnd = $value;
+        $this->end = $value;
 
         return $this;
     }
 
     public function toArray()
     {
-        return array_filter(get_object_vars($this));
+        $value = array_filter(get_object_vars($this));
+        foreach ($value as $k => $v) {
+            $value["offset" . Str::upper($k)] = $v;
+            unset($value[$k]);
+        }
+
+        return $value;
     }
 
     public function toJson($options = 0)
@@ -86,7 +144,7 @@ class Offset extends BoxContent
             throw new UnexpectedTypeException($value, 'string');
         }
 
-        $isNotValidSize = !in_array($value, static::ALLOWED_FONT_SIZE)
+        $isNotValidSize = !in_array($value, static::ALLOWED_VALUE)
             && (!Str::endsWith($value, 'px')
                 || !is_numeric(Str::before($value, 'px'))
                 || Str::before($value, 'px') < "0");
